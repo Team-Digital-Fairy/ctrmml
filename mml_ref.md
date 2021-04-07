@@ -14,7 +14,7 @@ comma-separated values. Strings can be enclosed in double quotes if needed.
 -	`@M<num>` - Defines a pitch envelope.
 -	`@P<num>` - Defines a pan envelope.
 
-## Addressing tracks
+## Selecting tracks
 A span of characters at the beginning of a line selects tracks. There must be
 no space between the beginning of the line and the first character in the
 track list.
@@ -22,10 +22,15 @@ track list.
 You can specify channels in any order, this affects the `{/}` conditional
 block.
 
+### Addressing tracks
+`*<num>` can be used to specify a track by its number. Letters `A` to `Z` can
+be used to refer to tracks `*0` to `*25`, successive tracks must be referred to
+by its number.
+
 ### Macros
-`*<num>` can be used to specify a track by its number. Since tracks 32 and
-above are unlikely to be used by sound channels, you can use them as macros
-with the `*` command.
+Tracks that are not allocated to a channel or dummy channel (depends on the
+platform) can be used as a macro with the `*` command. Typically that means
+tracks `*32` and above.
 
 This is not a substitution macro but rather more like a subroutine.
 Each track has its own octave and length counter.
@@ -281,11 +286,13 @@ around the `>`)
 	@11 psg
 		15>10
 
-Use `:` set the length of each value (in frames).
+Use `:` set the length of each value (in frames). The default length can
+be set with `l`
 
 	@12 psg
 		15:10     ; vol 15 for 10 frames
 		15>0:100  ; from 15 to 0 in 100 frames
+		l:40 15 14 13  ; total 120 frames
 
 Set the sustain position with `/` or the loop position with `|`
 
