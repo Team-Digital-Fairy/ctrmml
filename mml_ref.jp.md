@@ -38,11 +38,11 @@ MML reference for ctrmml (2020-12-10)
 各トラックは個別のオクターブと音長カウンタを持ちます。
 
 
-### Example:
--	`A` - use track A
--	`ABC` - use tracks A, B, C
--	`ACB` - use tracks in a different order
--	`*0` - use track number 0.
+### 例:
+-	`A` - トラックA
+-	`ABC` - トラックA B C
+-	`ACB` - トラックA B C (別オーダー)
+-	`*0` - トラックナンバー0 (トラックA)
 
 ## Adding notes and commands
 After specifying channels and adding spaces, you can enter MML commands. It is
