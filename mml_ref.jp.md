@@ -3,31 +3,40 @@ MML reference for ctrmml (2020-12-10)
 
 ## メタコマンド
 \#や@で始まる行はメタコマンドとして扱われます。
-`#`で始まるメタコマンドは文字列が,`@`で始まるメタコマンドはスペース区切り、またはカンマ区切りのパラメータが入ります。
+`#`で始まるメタコマンドは文字列が、`@`で始まるメタコマンドはスペース区切り、またはカンマ区切りのパラメータが入ります。
+
 文字列はダブルクオーテーションで囲うことができます。
 
 -	`#title`, `#composer`, `#author`, `#date`, `#comment` - 曲のメタデータ
 -	`#platform` - どのプラットフォームのMMLかの選択。
-	- **Note**: 今は `megadrive` または `mdsdrv`しか選択できません。
--	`@<num>` - 音色の定義。プラットフォームに依存する。
+	- **Note**: 今は`megadrive`または`mdsdrv`しか選択できません。
+-	`@<num>` - 音色の定義。プラットフォームに依存。
 -	`@E<num>` - エンベロープの定義。
 -	`@M<num>` - ピッチエンベロープの定義。
 -	`@P<num>` - パンエンベロープの定義。
 
-## トラックの定義
+## トラックの選択
 行の先頭に文字を配置することでトラックを選択できます。
 行の先頭にスペースを配置することはできません。
 
 トラックの選択はどの順番でもできます。
 これは条件分岐`{/}`に影響を与えます。
 
-### Macros
-`*<num>` can be used to specify a track by its number. Since tracks 32 and
-above are unlikely to be used by sound channels, you can use them as macros
-with the `*` command.
+### トラックの定義について
+`*<num>`を使うことでトラックを番号で指定することができます。
 
-This is not a substitution macro but rather more like a subroutine.
-Each track has its own octave and length counter.
+トラック`*0`から`*25`は`A`から`Z`でも選択することができます。
+それ以降のトラックは番号で指定してください。
+
+### マクロについて
+チャンネルまたはダミーチャンネル用に予約されていないものは
+`*`コマンドでチャンネルとして使用できます。
+
+普通、これはトラック`*32`以上です。
+
+このマクロはサブルーチンに似たような動作をします。
+各トラックは個別のオクターブと音長カウンタを持ちます。
+
 
 ### Example:
 -	`A` - use track A
@@ -172,8 +181,8 @@ The `#platform` tag controls the PCM mixing mode when playing back files in
 
 Setting `#platform` to `megadrive` will use VGM datablocks and DAC stream
 commands to play back samples. These files will have a smaller filesize, and
-are suitable for conversion using other sound drivers like XGM. However, only
-sample mixing and volume is not supported.
+are suitable for conversion using other sound drivers like XGM. However, in
+the VGM files, sample mixing and volume will not be supported.
 
 Setting `#platform` to `mdsdrv` will simulate MDSDRV's PCM driver. 2-3
 PCM channels can be mixed, and 16 levels of volume control is possible.
@@ -280,11 +289,13 @@ around the `>`)
 	@11 psg
 		15>10
 
-Use `:` set the length of each value (in frames).
+Use `:` set the length of each value (in frames). The default length can
+be set with `l`
 
 	@12 psg
 		15:10     ; vol 15 for 10 frames
 		15>0:100  ; from 15 to 0 in 100 frames
+		l:40 15 14 13  ; total 120 frames
 
 Set the sustain position with `/` or the loop position with `|`
 
@@ -293,12 +304,26 @@ Set the sustain position with `/` or the loop position with `|`
 	@14 psg
 		0>14:7 | 15 10 5 0 5 10
 
-When specifying envelopes, there must be no space between the
-parameters in a node, as the space itself separates nodes.
+Note that there must be no space between values and the `>` and `:`
+commands.
+
+	@15 psg
+		0 > 14 : 7 ; Wrong, causes error
+
+	@15 psg
+		0>14:7     ; Correct
+
+A space is however necessary between values and the `|` or `/` commands.
+
+	@16 psg
+		7|15 10 5   ; Wrong, causes error
+
+	@16 psg
+		7 | 15 10 5 ; Correct
 
 #### PCM samples
-PCM samples are defined as instruments. The first (and currently only)
-parameter is the path to the sample (relative to that of the MML file).
+PCM samples are defined as instruments. The first parameter is the path
+to the sample (relative to that of the MML file).
 The sample rate specified in the WAV file is used, and if the WAV file
 has more than one channel, the first (left) channel is read.
 
@@ -348,6 +373,9 @@ decimals, although they will be truncated to 8.8 bits fixed point.
 	- `depth` sets the depth of the vibrato in semitones.
 	- `Rate` defines the duration of 1/4 of the vibrato waveform.
 	Lower value = faster.
+
+Note that there should be no space between values and the `>` or `:`
+commands.
 
 ##### Examples
 Simple arpeggio:
